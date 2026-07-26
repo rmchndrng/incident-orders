@@ -2,7 +2,12 @@
 const http = require('http');
 
 function total(priceResponse, qty) {
-  return priceResponse.price * qty; // reads .price per the pricing contract
+  // The pricing contract now DECLARES its unit. Honour it rather than assuming dollars:
+  // pricing ships minor units (cents) and says so, so convert deterministically. An
+  // absent unit means the legacy dollar contract.
+  const raw = priceResponse.price;
+  const value = priceResponse.unit === 'cents' ? raw / 100 : raw;
+  return value * qty;
 }
 module.exports = { total };
 
