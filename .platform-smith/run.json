@@ -1,0 +1,12 @@
+{
+  "port": 3000,
+  "modes": {
+    "prod": {
+      "build": "npm install",
+      "swap": null,
+      "start": "node index.js",
+      "stop": "pkill -TERM -f 'node.*index.js'",
+      "health": "TCP :3000"
+    }
+  }
+}
