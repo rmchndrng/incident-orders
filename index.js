@@ -1,5 +1,12 @@
 // Orders service. Consumes the pricing service's contract: response.price.
 function total(priceResponse, qty) {
-  return priceResponse.price * qty; // reads .price per the pricing contract
+  // Handle unit field: when unit is "cents", convert to dollars before multiplying
+  if (priceResponse.unit === "cents") {
+    const priceInDollars = priceResponse.price / 100;
+    return priceInDollars * qty;
+  } else {
+    // Legacy: when unit is absent, assume dollars
+    return priceResponse.price * qty;
+  }
 }
 module.exports = { total };
