@@ -4,7 +4,7 @@
   "modes": {
     "prod": {
       "swap": null,
-      "start": "exec node index.js",
+      "start": "node index.js",
       "stop": "SIGTERM",
       "health": "GET /health"
     }
