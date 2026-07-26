@@ -1,0 +1,12 @@
+{
+  "port": 3002,
+  "workdir": "/workspace",
+  "modes": {
+    "prod": {
+      "swap": null,
+      "start": "node index.js",
+      "stop": "SIGTERM",
+      "health": "GET /health"
+    }
+  }
+}
