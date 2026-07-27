@@ -2,7 +2,9 @@
 const http = require('http');
 
 function total(priceResponse, qty) {
-  return priceResponse.price * qty; // reads .price per the pricing contract
+  // Defensive: handle both .price (correct contract) and .amount (broken contract)
+  const priceValue = priceResponse.price ?? priceResponse.amount;
+  return priceValue * qty;
 }
 module.exports = { total };
 
