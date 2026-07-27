@@ -1,0 +1,91 @@
+# === Section A: customer's build (synthesized — no original Dockerfile exists) ===
+# Standard Node.js production pattern: install deps, copy source, run.
+FROM node:20-slim AS runtime
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm install --omit=dev
+COPY *.js ./
+EXPOSE 3002
+
+# === Section B: Platform Smith tooling layered on top ===
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates git \
+    && rm -rf /var/lib/apt/lists/*
+COPY .platform-smith/bins/platform-smith-runtime /usr/local/bin/platform-smith-runtime
+COPY .platform-smith/bins/ps-git-credential-helper /usr/local/bin/ps-git-credential-helper
+RUN chmod +x /usr/local/bin/platform-smith-runtime /usr/local/bin/ps-git-credential-helper
+
+# Shared infra dirs the runtime writes to. 1777 (sticky, world-writable like
+# /tmp) keeps these user-agnostic — whatever user Section C selects can write
+# here, and only the writer can delete their own files.
+#   - /var/run/platform-smith — credential-helper Unix socket
+#   - /workspace              — runtime clones the customer repo here so
+#                               Claude can read+edit it from inside the pod
+RUN mkdir -p /var/run/platform-smith /workspace && \
+    chmod 1777 /var/run/platform-smith /workspace
+
+# Place the runbook at the deterministic path the runtime reads it from when the
+# operator asks the agent to rebuild/redeploy (§7.1). The runbook was authored
+# into .platform-smith/runbook.md above; this COPY bakes it into the image at a
+# NEUTRAL staging path. Do NOT bake anything under /workspace — it must stay
+# empty so the product pod's startup git clone can target it; the runtime
+# copies the runbook into /workspace/.platform-smith/ AFTER the clone (and a
+# repo-tracked runbook from a merged PR wins over the staged copy). The
+# psruntime block below chowns /opt/platform-smith to psruntime: the runtime
+# runs as psruntime and must be able to READ this staged file to place it
+# (a root-owned 0640 bake would fail the post-clone copy with EACCES).
+COPY .platform-smith/runbook.md /opt/platform-smith/runbook.md
+
+# run.json rides the SAME neutral-staging rail as the runbook (its machine-
+# executable twin); staged under /opt so /workspace stays empty for the startup
+# clone, and the runtime copies it into /workspace/.platform-smith/ post-clone.
+COPY .platform-smith/run.json /opt/platform-smith/run.json
+
+# Platform user: ALL Platform Smith processes (the runtime PID 1, Claude
+# sessions, and the customer CMD) run as the non-root user psruntime — Claude
+# refuses permission-bypass as root, so the final image MUST NOT default to
+# root. Create the user idiomatically for Debian/Ubuntu (node:20-slim is Debian).
+RUN apt-get update && apt-get install -y --no-install-recommends sudo passwd bash && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -s /bin/sh psruntime && \
+    echo "psruntime ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/psruntime && \
+    chmod 0440 /etc/sudoers.d/psruntime && \
+    chown -R psruntime:psruntime /workspace /var/run/platform-smith /opt/platform-smith
+
+# Make the service dir writable by psruntime: the in-pod atomic swap does
+# rename(/tmp/<new> -> run.json's swap target), which needs write on the
+# target's DIRECTORY — the customer's runtime WORKDIR (e.g. /app), created as
+# root by the customer's stages. Without it the swap fails "Permission denied".
+# Applies generally (interpreted swap:null stacks rebuild in place and also need
+# their working dir writable).
+RUN chown -R psruntime:psruntime /app
+
+# HOME/PATH for the runtime supervisor (ENTRYPOINT) and Claude (spawned by the
+# runtime on WS task): psruntime's home. GIT_TERMINAL_PROMPT + GIT_ASKPASS
+# keep git from blocking on a non-existent TTY during cred-helper round-trips.
+# Node/npm are already under /usr/local/bin (no prefix needed).
+ENV HOME=/home/psruntime
+ENV PATH=/home/psruntime/.local/bin:/usr/local/bin:/usr/bin:/bin
+ENV GIT_TERMINAL_PROMPT=0
+ENV GIT_ASKPASS=/bin/false
+
+USER psruntime
+RUN curl -fsSL https://claude.ai/install.sh | bash
+# Codex (2nd coding agent), pinned 0.139.0 to match ps-api's projectCodexRow
+# (the exec --json schema drifts between releases). Static musl binary →
+# psruntime ~/.local/bin (already first on PATH); needs curl + tar.
+RUN set -eux; \
+    case "$(uname -m)" in x86_64) t=x86_64-unknown-linux-musl ;; aarch64|arm64) t=aarch64-unknown-linux-musl ;; *) echo "unsupported codex arch: $(uname -m)" >&2; exit 1 ;; esac; \
+    curl -fsSL "https://github.com/openai/codex/releases/download/rust-v0.139.0/codex-$t.tar.gz" -o /tmp/cx.tgz; \
+    tar -xzf /tmp/cx.tgz -C /tmp; \
+    install -m 0755 "$(find /tmp -type f -name 'codex*' | head -n1)" "$HOME/.local/bin/codex"; \
+    rm -f /tmp/cx.tgz; codex --version
+RUN git config --global credential.helper "!ps-git-credential-helper" && \
+    git config --global credential.useHttpPath true
+USER root
+
+# === Section C: ENTRYPOINT (Platform Smith) + customer's CMD ===
+USER psruntime
+ENTRYPOINT ["/usr/local/bin/platform-smith-runtime"]
+CMD ["node", "index.js"]
