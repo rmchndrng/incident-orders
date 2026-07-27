@@ -3,6 +3,7 @@
   "workdir": "/workspace",
   "modes": {
     "prod": {
+      "build": "npm install --omit=dev",
       "swap": null,
       "start": "node index.js",
       "stop": "SIGTERM",
