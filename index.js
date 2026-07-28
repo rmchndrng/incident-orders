@@ -2,7 +2,14 @@
 const http = require('http');
 
 function total(priceResponse, qty) {
-  return priceResponse.price * qty; // reads .price per the pricing contract
+  // Honor the declared unit from pricing service
+  // When unit === "cents", convert to major units (dollars) before multiplying
+  // When unit is absent, maintain legacy dollar behavior for backward compatibility
+  let priceInDollars = priceResponse.price;
+  if (priceResponse.unit === 'cents') {
+    priceInDollars = priceResponse.price / 100;
+  }
+  return priceInDollars * qty;
 }
 module.exports = { total };
 
