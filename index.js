@@ -1,8 +1,8 @@
-// Orders service. Consumes the pricing service's contract: response.price.
+// Orders service. Consumes the pricing service's contract: response.amount.
 const http = require('http');
 
 function total(priceResponse, qty) {
-  return priceResponse.price * qty; // reads .price per the pricing contract
+  return priceResponse.amount * qty; // reads .amount per the pricing contract
 }
 module.exports = { total };
 
@@ -10,8 +10,8 @@ module.exports = { total };
 // test can require() this module without binding a port.
 //
 // This is the CROSS-SERVICE edge: orders calls pricing over HTTP and applies the
-// contract. When pricing serves { amount } instead of { price }, `total` yields NaN
-// — the incident, observable end to end rather than only in a unit test.
+// contract. The pricing service returns { amount } which `total` uses to compute
+// the order total.
 if (require.main === module) {
   const port = Number(process.env.PORT || 3002);
   const pricingUrl = (process.env.PRICING_URL || 'http://127.0.0.1:3001').replace(/\/$/, '');
