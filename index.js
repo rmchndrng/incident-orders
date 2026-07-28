@@ -2,7 +2,16 @@
 const http = require('http');
 
 function total(priceResponse, qty) {
-  return priceResponse.price * qty; // reads .price per the pricing contract
+  // Handle both old field name 'price' and new field name 'amount'
+  const rawValue = priceResponse.price !== undefined ? priceResponse.price : priceResponse.amount;
+
+  // When unit === "cents", convert to major units (divide by 100)
+  // When unit is absent, keep legacy dollar behavior (backward compatibility)
+  if (priceResponse.unit === 'cents') {
+    return (rawValue / 100) * qty;
+  }
+
+  return rawValue * qty;
 }
 module.exports = { total };
 
