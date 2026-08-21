@@ -2,3 +2,6 @@
 {"ts":"2026-08-21T13:39:26Z","type":"status_changed","to":"requirements"}
 {"ts":"2026-08-21T13:41:19Z","type":"artifact_added","kind":"requirements","path":"docs/work/work-260821133013-koala-bug-check/requirements/0001-bug-check-req.md","title":"Bug Check Requirements"}
 {"ts":"2026-08-21T13:41:20Z","type":"phase_done","phase":"requirements","project":"incident-orders"}
+{"ts":"2026-08-21T13:46:11Z","type":"status_changed","to":"planning"}
+{"ts":"2026-08-21T13:46:44Z","type":"artifact_added","kind":"plan","path":"docs/work/work-260821133013-koala-bug-check/plans/phase-1.md","title":"Bug Check Plan"}
+{"ts":"2026-08-21T13:46:45Z","type":"phase_done","phase":"planning","project":"incident-orders"}
