@@ -6,3 +6,7 @@
 {"ts":"2026-08-21T17:06:52Z","type":"status_changed","to":"planning"}
 {"ts":"2026-08-21T17:07:55Z","type":"artifact_added","kind":"plan","path":"docs/work/work-260821170253-possum-investigate-bugs/plans/phase-1.md","title":"Investigation implementation plan"}
 {"ts":"2026-08-21T17:07:56Z","type":"phase_done","phase":"planning","project":"incident-orders"}
+{"ts":"2026-08-21T17:08:43Z","type":"status_changed","to":"implementation"}
+{"ts":"2026-08-21T17:09:48Z","type":"artifact_added","kind":"implementation","path":"docs/work/work-260821170253-possum-investigate-bugs/implementation/status.md","title":"Investigation status and findings"}
+{"ts":"2026-08-21T17:11:06Z","type":"artifact_added","kind":"validation","path":"docs/work/work-260821170253-possum-investigate-bugs/implementation/validation.md","title":"Investigation validation record"}
+{"ts":"2026-08-21T17:11:07Z","type":"phase_done","phase":"implementation","project":"incident-orders"}
