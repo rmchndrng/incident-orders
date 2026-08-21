@@ -3,3 +3,6 @@
 {"ts":"2026-08-21T17:04:46Z","type":"status_changed","to":"requirements"}
 {"ts":"2026-08-21T17:06:06Z","type":"artifact_added","kind":"requirements","path":"docs/work/work-260821170253-possum-investigate-bugs/requirements/0001-investigate-bugs-req.md","title":"Investigate order-related bugs requirements"}
 {"ts":"2026-08-21T17:06:07Z","type":"phase_done","phase":"requirements","project":"incident-orders"}
+{"ts":"2026-08-21T17:06:52Z","type":"status_changed","to":"planning"}
+{"ts":"2026-08-21T17:07:55Z","type":"artifact_added","kind":"plan","path":"docs/work/work-260821170253-possum-investigate-bugs/plans/phase-1.md","title":"Investigation implementation plan"}
+{"ts":"2026-08-21T17:07:56Z","type":"phase_done","phase":"planning","project":"incident-orders"}
