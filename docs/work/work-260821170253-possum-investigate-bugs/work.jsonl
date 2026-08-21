@@ -1,2 +1,5 @@
 {"ts":"2026-08-21T17:04:30Z","type":"created","title":"Investigate order-related bugs","project":"incident-orders","run_label":"260821170253-possum","work_ref":"work-260821170253-possum-investigate-bugs"}
 {"ts":"2026-08-21T17:04:31Z","type":"run_started","project":"incident-orders","run_label":"260821170253-possum"}
+{"ts":"2026-08-21T17:04:46Z","type":"status_changed","to":"requirements"}
+{"ts":"2026-08-21T17:06:06Z","type":"artifact_added","kind":"requirements","path":"docs/work/work-260821170253-possum-investigate-bugs/requirements/0001-investigate-bugs-req.md","title":"Investigate order-related bugs requirements"}
+{"ts":"2026-08-21T17:06:07Z","type":"phase_done","phase":"requirements","project":"incident-orders"}
