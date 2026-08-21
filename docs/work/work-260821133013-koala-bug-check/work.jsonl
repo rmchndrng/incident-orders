@@ -10,3 +10,6 @@
 {"ts":"2026-08-21T13:50:44Z","type":"artifact_added","kind":"implementation","path":"docs/work/work-260821133013-koala-bug-check/implementation/remediation-plan.md","title":"Remediation Plan"}
 {"ts":"2026-08-21T13:50:45Z","type":"artifact_added","kind":"implementation","path":"docs/work/work-260821133013-koala-bug-check/implementation/status.md","title":"Implementation Status"}
 {"ts":"2026-08-21T13:50:47Z","type":"phase_done","phase":"implementation","project":"incident-orders"}
+{"ts":"2026-08-21T13:51:24Z","type":"status_changed","to":"validation"}
+{"ts":"2026-08-21T13:53:03Z","type":"artifact_added","kind":"validation","path":"docs/work/work-260821133013-koala-bug-check/implementation/validation.md","title":"Validation Report"}
+{"ts":"2026-08-21T13:53:04Z","type":"phase_done","phase":"validation","project":"incident-orders"}
