@@ -9,3 +9,6 @@
 {"ts":"2026-08-21T11:01:29Z","type":"status_changed","to":"implementation"}
 {"ts":"2026-08-21T11:02:07Z","type":"artifact_added","kind":"implementation","path":"docs/work/work-260821102602-elk-summarize-solution/implementation/summary.md","title":"Order processing solution summary document"}
 {"ts":"2026-08-21T11:02:08Z","type":"phase_done","phase":"implementation","project":"incident-orders"}
+{"ts":"2026-08-21T11:02:44Z","type":"status_changed","to":"validation"}
+{"ts":"2026-08-21T11:03:45Z","type":"artifact_added","kind":"validation","path":"docs/work/work-260821102602-elk-summarize-solution/implementation/validation.md","title":"Validation report for solution summary"}
+{"ts":"2026-08-21T11:03:46Z","type":"phase_done","phase":"validation","project":"incident-orders"}
